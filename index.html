@@ -35,7 +35,7 @@
       const height = size[1];
       document.getElementById("result").innerHTML = "<p>⏳ جاري توليد الصورة...</p>";
 
-      const url = `https://flux-schnell.hello-kaiiddo.workers.dev/img?prompt=${encodeURIComponent(prompt)}&model=flux-schnell&guidance=8.5&strength=1.4&width=${width}&height=${height}`;
+      const url = `https://purple-hat-d92c.dseraser31.workers.dev/?prompt=${encodeURIComponent(prompt)}&width=512&height=512`;
 
       const res = await fetch(url);
       if (res.ok) {
