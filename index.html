@@ -1,49 +1,96 @@
 <!DOCTYPE html>
-<html lang="ar">
+<html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>مولد الصور - Flux Schnell</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI Image Generator</title>
   <style>
-    body { font-family: Arial, sans-serif; background: #1a1a1a; color: #fff; text-align: center; padding: 30px; }
-    input, select, button { padding: 10px; margin: 10px; border-radius: 8px; border: none; }
-    input, select { width: 60%; }
-    button { background: #ff6600; color: #fff; cursor: pointer; font-weight: bold; }
-    button:hover { background: #e65c00; }
-    img { max-width: 80%; margin-top: 20px; border: 4px solid #444; border-radius: 12px; }
+    body {
+      font-family: Arial, sans-serif;
+      background: #f4f4f4;
+      margin: 0;
+      padding: 20px;
+      text-align: center;
+    }
+    .container {
+      max-width: 600px;
+      margin: auto;
+      background: #fff;
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+    input, select, button {
+      width: 100%;
+      padding: 10px;
+      margin: 8px 0;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      font-size: 16px;
+    }
+    button {
+      background: #4CAF50;
+      color: white;
+      cursor: pointer;
+    }
+    button:hover {
+      background: #45a049;
+    }
+    img {
+      margin-top: 20px;
+      max-width: 100%;
+      border-radius: 12px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+    }
   </style>
 </head>
 <body>
-  <h1>🎨 مولد الصور (Flux Schnell)</h1>
-  <form id="generateForm">
-    <input type="text" id="prompt" placeholder="اكتب الوصف هنا..." required><br>
-    <label>📐 المقاس:</label>
-    <select id="size">
-      <option value="512x512">مربع (512x512)</option>
-      <option value="768x1024">طويل (768x1024)</option>
-      <option value="1024x576">عريض (1024x576)</option>
-    </select><br>
-    <button type="submit">🚀 توليد الصورة</button>
-  </form>
-  <div id="result"></div>
+  <div class="container">
+    <h2>✨ AI Image Generator</h2>
+    <form id="imageForm">
+      <input type="text" id="prompt" placeholder="Enter your prompt..." required>
+      
+      <select id="size">
+        <option value="512x512">📐 Square (512x512)</option>
+        <option value="768x512">📏 Wide (768x512)</option>
+        <option value="512x768">📏 Tall (512x768)</option>
+        <option value="1024x1024">🖼️ Large Square (1024x1024)</option>
+      </select>
+
+      <button type="submit">Generate 🚀</button>
+    </form>
+
+    <img id="result" src="" alt="Generated Image will appear here">
+  </div>
 
   <script>
-    document.getElementById("generateForm").addEventListener("submit", async (e) => {
+    const form = document.getElementById("imageForm");
+    const result = document.getElementById("result");
+
+    form.addEventListener("submit", async (e) => {
       e.preventDefault();
+
       const prompt = document.getElementById("prompt").value;
       const size = document.getElementById("size").value.split("x");
       const width = size[0];
       const height = size[1];
-      document.getElementById("result").innerHTML = "<p>⏳ جاري توليد الصورة...</p>";
 
-      const url = `https://purple-hat-d92c.dseraser31.workers.dev/?prompt=${encodeURIComponent(prompt)}&width=512&height=512`;
+      result.src = ""; // clear old image
+      result.alt = "⏳ Generating image...";
 
-      const res = await fetch(url);
-      if (res.ok) {
-        const blob = await res.blob();
+      try {
+        const url = `https://purple-hat-d92c.dseraser31.workers.dev/?prompt=${encodeURIComponent(prompt)}&width=${width}&height=${height}`;
+        
+        const resp = await fetch(url);
+        if (!resp.ok) throw new Error("Failed to fetch image");
+
+        const blob = await resp.blob();
         const imgUrl = URL.createObjectURL(blob);
-        document.getElementById("result").innerHTML = `<a href="${imgUrl}" download="image.png"><img src="${imgUrl}" alt="الصورة"></a><p>⬇️ اضغط على الصورة للتحميل</p>`;
-      } else {
-        document.getElementById("result").innerHTML = "<p>❌ حدث خطأ</p>";
+
+        result.src = imgUrl;
+        result.alt = "Generated Image";
+      } catch (err) {
+        alert("❌ Error: " + err.message);
       }
     });
   </script>
